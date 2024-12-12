@@ -5,25 +5,25 @@
 <style>
 body {
   font-family: 'Roboto Mono', monospace;
-  background: linear-gradient(135deg, #1e2833, #2e3f4f);
+  background: linear-gradient(135deg, #1e2833, #2e3f4f); /* Darker, more futuristic gradient */
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  color: #dfe6e9;
+  color: #dfe6e9; /* Lighter grey text */
 }
 
 .container {
   width: 90%;
   max-width: 900px;
-  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8));
+  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8)); /* Transparent dark gradient */
   border-radius: 20px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
   padding: 40px;
   margin: 50px auto;
-  position: relative;
+  position: relative; /* For positioning the navigation buttons */
 }
 
 .slide {
@@ -31,21 +31,75 @@ body {
   text-align: center;
   padding: 30px;
   transition: opacity 0.5s ease;
-  opacity: 0;
+  opacity: 0; /* Initially hidden */
 }
 
 .slide.active {
-  opacity: 1;
+  opacity: 1; /* Fade in when active */
 }
 
-.highlight {
-    background-color: yellow;
-    color: black;
+
+.slide img {
+  max-width: 40%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); /* Subtle glow */
+  margin-bottom: 30px;
+}
+
+.slide h1 {
+  font-size: 3.5em;
+  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+
+.slide h2 {
+  font-size: 2.2em;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+  margin-bottom: 30px;
 }
 
 .slide p {
-    word-wrap: break-word;
-    white-space: pre-wrap;
+  font-size: 1.4em;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.navigation {
+  display: flex;
+  gap: 20px; /* Space between buttons */
+}
+
+.navigation button {
+  background-color: rgba(0, 123, 255, 0.8); /* Transparent blue */
+  border: none;
+  color: white;
+  padding: 15px 25px;
+  font-size: 1.2em;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.navigation button:hover {
+  background-color: rgba(0, 100, 255, 0.9);
+}
+
+.slide button { /* Speak button */
+  background-color: rgba(0, 123, 255, 0.8);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.slide button:hover {
+  background-color: rgba(0, 100, 255, 0.9);
 }
 
 </style>
@@ -53,7 +107,7 @@ body {
 <body>
 
 <div class="container">
-  <div class="slide active" id="slide1">
+  <div class="slide" id="slide1">
     <h1>The Evolution of Computer Parts</h1>
     <h2>A Journey Through Time</h2>
     <img src="Personal_System_2_Series_of_Computers.png" alt="80s/90s Computer">
@@ -140,13 +194,12 @@ body {
     <p id="slide11Text">We've come a long way since the early days of computers! From floppy disks to flash drives, software to cloud computing, we've seen incredible advancements in technology. Who knows what the future will hold?</p>
     <button onclick="speak(this.parentNode)">Speak</button>
   </div>
-</div>
-
 <center>
   <div class="navigation">
     <button id="prevBtn" onclick="showPreviousSlide()" disabled>Previous</button>
     <button id="nextBtn" onclick="showNextSlide()">Next</button>
   </div></center>
+</div>
 
 <script>
 let currentSlide = 0;
@@ -155,59 +208,46 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
 function showSlide(n) {
-    if (n < 0) { n = slides.length - 1; }
-    if (n >= slides.length) { n = 0; }
-    for (let i = 0; i < slides.length; i++) {
-        slides[i].classList.remove("active");
-        slides[i].style.display = "none";
-    }
-    slides[n].style.display = "block";
-    slides[n].classList.add("active");
-    currentSlide = n;
-    updateNavigationButtons();
+  if (n < 0) { n = slides.length - 1; }
+  if (n >= slides.length) { n = 0; }
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].classList.remove("active");
+    slides[i].style.display = "none";
+  }
+  slides[n].style.display = "block";
+  slides[n].classList.add("active");
+  currentSlide = n;
+  updateNavigationButtons();
 }
 
 function showNextSlide() {
-    showSlide(currentSlide + 1);
+  showSlide(currentSlide + 1);
 }
 
 function showPreviousSlide() {
-    showSlide(currentSlide - 1);
+  showSlide(currentSlide - 1);
 }
 
 function updateNavigationButtons() {
-    prevBtn.disabled = currentSlide === 0;
-    nextBtn.disabled = currentSlide === slides.length - 1;
+  prevBtn.disabled = currentSlide === 0;
+  nextBtn.disabled = currentSlide === slides.length - 1;
 }
 
 function speak(slide) {
-    let text = slide.querySelector('p').textContent.split(' ');
-    let utterance = new SpeechSynthesisUtterance('');
-    utterance.text = slide.querySelector('p').textContent;
-    utterance.addEventListener('start', () => {
-        let index = 0;
-        function highlightText() {
-            if (index >= text.length) return;
-            let highlightedText = text[index];
-            slide.querySelector('p').innerHTML = slide.querySelector('p').textContent.replace(new RegExp('\\b' + highlightedText + '\\b', 'g'), '<span class="highlight">$&</span>');
-            index++;
-            let wordLength = highlightedText.length;
-            let speechRate = speechSynthesis.speechSynthesis.getSpeechRate() || 1;
-            setTimeout(highlightText, Math.max(wordLength * 150 / speechRate, 250));
-        }
-        highlightText();
-    });
+    let text = slide.querySelector('p').textContent;
+    let utterance = new SpeechSynthesisUtterance(text);
     utterance.addEventListener('end', () => {
-        slide.querySelector('p').innerHTML = slide.querySelector('p').textContent;
+      // Handle the end of speech synthesis here if needed
     });
     utterance.addEventListener('error', (event) => {
-        console.error("Speech synthesis error:", event.error);
-        alert("Text-to-speech is not supported by your browser or is currently unavailable. Please try a different browser.");
+      console.error("Speech synthesis error:", event.error);
+      alert("Text-to-speech is not supported by your browser or is currently unavailable.");
     });
     speechSynthesis.speak(utterance);
 }
 
-showSlide(0);
+showSlide(0); // Show the first slide initially
+
 </script>
 
 </body>
