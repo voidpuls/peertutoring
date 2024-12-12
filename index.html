@@ -5,71 +5,46 @@
 <style>
 body {
   font-family: 'Roboto Mono', monospace;
-  background: linear-gradient(135deg, #1e2833, #2e3f4f);
+  background: linear-gradient(135deg, #1e2833, #2e3f4f); /* Darker, more futuristic gradient */
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  color: #dfe6e9;
+  color: #dfe6e9; /* Lighter grey text */
 }
 
 .container {
   width: 90%;
   max-width: 900px;
-  background: linear-gradient(to bottom, rgba(40,55,68,0.9), rgba(26,38,49,0.9));
+  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8)); /* Transparent dark gradient */
   border-radius: 20px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
   padding: 40px;
   margin: 50px auto;
-  position: relative;
-  animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  position: relative; /* For positioning the navigation buttons */
 }
 
 .slide {
   display: none;
   text-align: center;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  padding: 30px;
+  transition: opacity 0.5s ease;
+  opacity: 0; /* Initially hidden */
 }
 
 .slide.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 1; /* Fade in when active */
 }
+
 
 .slide img {
   max-width: 40%;
   height: auto;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); /* Subtle glow */
   margin-bottom: 30px;
-  animation: zoomIn 0.8s ease;
-}
-
-@keyframes zoomIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
 .slide h1 {
@@ -92,13 +67,11 @@ body {
 
 .navigation {
   display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
+  gap: 20px; /* Space between buttons */
 }
 
 .navigation button {
-  background-color: rgba(0, 123, 255, 0.8);
+  background-color: rgba(0, 123, 255, 0.8); /* Transparent blue */
   border: none;
   color: white;
   padding: 15px 25px;
@@ -106,20 +79,14 @@ body {
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .navigation button:hover {
   background-color: rgba(0, 100, 255, 0.9);
-  transform: scale(1.1);
 }
 
-.navigation button:disabled {
-  background-color: rgba(0, 123, 255, 0.4);
-  cursor: not-allowed;
-}
-
-.slide button {
+.slide button { /* Speak button */
   background-color: rgba(0, 123, 255, 0.8);
   color: white;
   padding: 12px 20px;
@@ -134,9 +101,11 @@ body {
 .slide button:hover {
   background-color: rgba(0, 100, 255, 0.9);
 }
+
 </style>
 </head>
 <body>
+
 <div class="container">
   <div class="slide" id="slide1">
     <h1>The Evolution of Computer Parts</h1>
@@ -225,11 +194,13 @@ body {
     <p id="slide11Text">We've come a long way since the early days of computers! From floppy disks to flash drives, software to cloud computing, we've seen incredible advancements in technology. Who knows what the future will hold?</p>
     <button onclick="speak(this.parentNode)">Speak</button>
   </div>
+<center>
   <div class="navigation">
     <button id="prevBtn" onclick="showPreviousSlide()" disabled>Previous</button>
     <button id="nextBtn" onclick="showNextSlide()">Next</button>
-  </div>
+  </div></center>
 </div>
+
 <script>
 let currentSlide = 0;
 const slides = document.getElementsByClassName("slide");
@@ -237,22 +208,47 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
 function showSlide(n) {
-  if (n < 0) n = slides.length - 1;
-  if (n >= slides.length) n = 0;
-  Array.from(slides).forEach(slide => slide.classList.remove("active"));
+  if (n < 0) { n = slides.length - 1; }
+  if (n >= slides.length) { n = 0; }
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].classList.remove("active");
+    slides[i].style.display = "none";
+  }
+  slides[n].style.display = "block";
   slides[n].classList.add("active");
   currentSlide = n;
-  prevBtn.disabled = currentSlide === 0;
-  nextBtn.disabled = currentSlide === slides.length - 1;
+  updateNavigationButtons();
+}
+
+function showNextSlide() {
+  showSlide(currentSlide + 1);
 }
 
 function showPreviousSlide() {
   showSlide(currentSlide - 1);
 }
 
-function showNextSlide() {
-  showSlide(currentSlide + 1);
+function updateNavigationButtons() {
+  prevBtn.disabled = currentSlide === 0;
+  nextBtn.disabled = currentSlide === slides.length - 1;
 }
+
+function speak(slide) {
+    let text = slide.querySelector('p').textContent;
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.addEventListener('end', () => {
+      // Handle the end of speech synthesis here if needed
+    });
+    utterance.addEventListener('error', (event) => {
+      console.error("Speech synthesis error:", event.error);
+      alert("Text-to-speech is not supported by your browser or is currently unavailable.");
+    });
+    speechSynthesis.speak(utterance);
+}
+
+showSlide(0); // Show the first slide initially
+
 </script>
+
 </body>
 </html>
