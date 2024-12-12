@@ -49,13 +49,11 @@ body {
 }
 
 </style>
-
-
 </head>
 <body>
 
 <div class="container">
-  <div class="slide" id="slide1">
+  <div class="slide active" id="slide1">
     <h1>The Evolution of Computer Parts</h1>
     <h2>A Journey Through Time</h2>
     <img src="Personal_System_2_Series_of_Computers.png" alt="80s/90s Computer">
@@ -142,21 +140,50 @@ body {
     <p id="slide11Text">We've come a long way since the early days of computers! From floppy disks to flash drives, software to cloud computing, we've seen incredible advancements in technology. Who knows what the future will hold?</p>
     <button onclick="speak(this.parentNode)">Speak</button>
   </div>
+</div>
 
 <center>
   <div class="navigation">
     <button id="prevBtn" onclick="showPreviousSlide()" disabled>Previous</button>
     <button id="nextBtn" onclick="showNextSlide()">Next</button>
   </div></center>
-</div>
 
-  <script>
-// ... (showSlide, showNextSlide, showPreviousSlide, updateNavigationButtons functions remain the same)
+<script>
+let currentSlide = 0;
+const slides = document.getElementsByClassName("slide");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+function showSlide(n) {
+    if (n < 0) { n = slides.length - 1; }
+    if (n >= slides.length) { n = 0; }
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+        slides[i].style.display = "none";
+    }
+    slides[n].style.display = "block";
+    slides[n].classList.add("active");
+    currentSlide = n;
+    updateNavigationButtons();
+}
+
+function showNextSlide() {
+    showSlide(currentSlide + 1);
+}
+
+function showPreviousSlide() {
+    showSlide(currentSlide - 1);
+}
+
+function updateNavigationButtons() {
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+}
 
 function speak(slide) {
     let text = slide.querySelector('p').textContent.split(' ');
     let utterance = new SpeechSynthesisUtterance('');
-    utterance.text = slide.querySelector('p').textContent; // Set text directly
+    utterance.text = slide.querySelector('p').textContent;
     utterance.addEventListener('start', () => {
         let index = 0;
         function highlightText() {
@@ -164,31 +191,22 @@ function speak(slide) {
             let highlightedText = text[index];
             slide.querySelector('p').innerHTML = slide.querySelector('p').textContent.replace(new RegExp('\\b' + highlightedText + '\\b', 'g'), '<span class="highlight">$&</span>');
             index++;
-            //More robust timing adjustment:
             let wordLength = highlightedText.length;
-            let speechRate = speechSynthesis.speechSynthesis.getSpeechRate() || 1; //Default to 1 if getSpeechRate fails
-            setTimeout(highlightText, Math.max(wordLength * 150 / speechRate, 250)); //Minimum delay of 250ms to prevent rapid highlighting
-
+            let speechRate = speechSynthesis.speechSynthesis.getSpeechRate() || 1;
+            setTimeout(highlightText, Math.max(wordLength * 150 / speechRate, 250));
         }
         highlightText();
     });
     utterance.addEventListener('end', () => {
-        //remove highlights after speaking
         slide.querySelector('p').innerHTML = slide.querySelector('p').textContent;
     });
     utterance.addEventListener('error', (event) => {
         console.error("Speech synthesis error:", event.error);
         alert("Text-to-speech is not supported by your browser or is currently unavailable. Please try a different browser.");
     });
-    utterance.addEventListener('boundary', (event) => {
-        if (event.name === 'word') {
-            console.log("Word boundary reached!");
-        }
-    });
     speechSynthesis.speak(utterance);
 }
 
-// Add your slides here, remembering to replace the image src attributes with correct paths!
 showSlide(0);
 </script>
 
