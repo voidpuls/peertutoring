@@ -1,108 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>The Evolution of Computer Parts</title>
-<style>
-body {
-  font-family: 'Roboto Mono', monospace;
-  background: linear-gradient(135deg, #1e2833, #2e3f4f); /* Darker, more futuristic gradient */
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  color: #dfe6e9; /* Lighter grey text */
-}
-
-.container {
-  width: 90%;
-  max-width: 900px;
-  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8)); /* Transparent dark gradient */
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-  padding: 40px;
-  margin: 50px auto;
-  position: relative; /* For positioning the navigation buttons */
-}
-
-.slide {
-  display: none;
-  text-align: center;
-  padding: 30px;
-  transition: opacity 0.5s ease;
-  opacity: 0; /* Initially hidden */
-}
-
-.slide.active {
-  opacity: 1; /* Fade in when active */
-}
-
-
-.slide img {
-  max-width: 40%;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); /* Subtle glow */
-  margin-bottom: 30px;
-}
-
-.slide h1 {
-  font-size: 3.5em;
-  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6);
-  margin-bottom: 20px;
-}
-
-.slide h2 {
-  font-size: 2.2em;
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
-  margin-bottom: 30px;
-}
-
-.slide p {
-  font-size: 1.4em;
-  line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.navigation {
-  display: flex;
-  gap: 20px; /* Space between buttons */
-}
-
-.navigation button {
-  background-color: rgba(0, 123, 255, 0.8); /* Transparent blue */
-  border: none;
-  color: white;
-  padding: 15px 25px;
-  font-size: 1.2em;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
-}
-
-.navigation button:hover {
-  background-color: rgba(0, 100, 255, 0.9);
-}
-
-.slide button { /* Speak button */
-  background-color: rgba(0, 123, 255, 0.8);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 20px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
-}
-
-.slide button:hover {
-  background-color: rgba(0, 100, 255, 0.9);
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Evolution of Computer Parts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .slide {
+      display: none;
+      text-align: center;
+      margin: 20px;
+    }
+    .slide.active {
+      display: block;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    span.highlight {
+      background-color: yellow;
+    }
+  </style>
 </head>
 <body>
 
@@ -194,78 +127,53 @@ body {
     <p id="slide11Text">We've come a long way since the early days of computers! From floppy disks to flash drives, software to cloud computing, we've seen incredible advancements in technology. Who knows what the future will hold?</p>
     <button onclick="speak(this.parentNode)">Speak</button>
   </div>
-<center>
-  <div class="navigation">
-    <button id="prevBtn" onclick="showPreviousSlide()" disabled>Previous</button>
-    <button id="nextBtn" onclick="showNextSlide()">Next</button>
-  </div></center>
+
+  <div>
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
 </div>
 
 <script>
+const slides = document.querySelectorAll('.slide');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let currentSlide = 0;
 
-html
-Copy code
-slides[i].classList.remove("active");
-    slides[i].style.display = "none";
+// Function to show a specific slide
+function showSlide(n) {
+  slides.forEach((slide, index) => {
+    slide.classList.remove('active');
+    if (index === n) slide.classList.add('active');
+  });
+  prevBtn.disabled = n === 0;
+  nextBtn.disabled = n === slides.length - 1;
+}
+
+// Navigate between slides
+prevBtn.addEventListener('click', () => {
+  if (currentSlide > 0) {
+    currentSlide--;
+    showSlide(currentSlide);
   }
-  slides[n].classList.add("active");
-  slides[n].style.display = "block";
-  currentSlide = n;
+});
 
-  prevBtn.disabled = currentSlide === 0;
-  nextBtn.disabled = currentSlide === slides.length - 1;
-}
+nextBtn.addEventListener('click', () => {
+  if (currentSlide < slides.length - 1) {
+    currentSlide++;
+    showSlide(currentSlide);
+  }
+});
 
-function showNextSlide() {
-  showSlide(currentSlide + 1);
-}
-
-function showPreviousSlide() {
-  showSlide(currentSlide - 1);
-}
-
-// Initial slide
-showSlide(currentSlide);
-
-// Text-to-speech with word highlighting
-function speak(slide) {
-  const textElement = slide.querySelector("p");
-  const text = textElement.textContent;
-  const words = text.split(" ");
-  let currentWordIndex = 0;
-
-  const utterance = new SpeechSynthesisUtterance();
-  utterance.text = text;
-  utterance.rate = 1;
-  utterance.pitch = 1;
-
-  utterance.onboundary = function(event) {
-    if (event.name === "word") {
-      const wordStart = event.charIndex;
-      const wordEnd = wordStart + words[currentWordIndex].length;
-
-      // Reset all words' style
-      textElement.innerHTML = text;
-
-      // Highlight current word
-      const highlightedText = `${text.slice(0, wordStart)}<span style="background-color: yellow;">${text.slice(
-        wordStart,
-        wordEnd
-      )}</span>${text.slice(wordEnd)}`;
-      textElement.innerHTML = highlightedText;
-
-      currentWordIndex++;
-    }
-  };
-
-  utterance.onend = function() {
-    // Reset text to its original state
-    textElement.innerHTML = text;
-  };
-
+// Text-to-speech functionality
+function speak(element) {
+  const text = element.querySelector('p').innerText;
+  const utterance = new SpeechSynthesisUtterance(text);
   speechSynthesis.speak(utterance);
 }
-</script>
 
+// Initialize the first slide
+showSlide(currentSlide);
+</script>
 </body>
 </html>
