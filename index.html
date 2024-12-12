@@ -38,71 +38,19 @@ body {
   opacity: 1; /* Fade in when active */
 }
 
-
-.slide img {
-  max-width: 40%;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15); /* Subtle glow */
-  margin-bottom: 30px;
-}
-
-.slide h1 {
-  font-size: 3.5em;
-  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6);
-  margin-bottom: 20px;
-}
-
-.slide h2 {
-  font-size: 2.2em;
-  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
-  margin-bottom: 30px;
+/* Add a highlight effect to the text as it's read */
+.highlight {
+    background-color: yellow;
+    color: black;
 }
 
 .slide p {
-  font-size: 1.4em;
-  line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.navigation {
-  display: flex;
-  gap: 20px; /* Space between buttons */
-}
-
-.navigation button {
-  background-color: rgba(0, 123, 255, 0.8); /* Transparent blue */
-  border: none;
-  color: white;
-  padding: 15px 25px;
-  font-size: 1.2em;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
-}
-
-.navigation button:hover {
-  background-color: rgba(0, 100, 255, 0.9);
-}
-
-.slide button { /* Speak button */
-  background-color: rgba(0, 123, 255, 0.8);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 20px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: background-color 0.3s ease;
-}
-
-.slide button:hover {
-  background-color: rgba(0, 100, 255, 0.9);
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 </style>
+
 </head>
 <body>
 
@@ -208,40 +156,55 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
 function showSlide(n) {
-  if (n < 0) { n = slides.length - 1; }
-  if (n >= slides.length) { n = 0; }
-  for (let i = 0; i < slides.length; i++) {
-    slides[i].classList.remove("active");
-    slides[i].style.display = "none";
-  }
-  slides[n].style.display = "block";
-  slides[n].classList.add("active");
-  currentSlide = n;
-  updateNavigationButtons();
+    if (n < 0) { n = slides.length - 1; }
+    if (n >= slides.length) { n = 0; }
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+        slides[i].style.display = "none";
+    }
+    slides[n].style.display = "block";
+    slides[n].classList.add("active");
+    currentSlide = n;
+    updateNavigationButtons();
 }
 
 function showNextSlide() {
-  showSlide(currentSlide + 1);
+    showSlide(currentSlide + 1);
 }
 
 function showPreviousSlide() {
-  showSlide(currentSlide - 1);
+    showSlide(currentSlide - 1);
 }
 
 function updateNavigationButtons() {
-  prevBtn.disabled = currentSlide === 0;
-  nextBtn.disabled = currentSlide === slides.length - 1;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
 }
 
 function speak(slide) {
-    let text = slide.querySelector('p').textContent;
-    let utterance = new SpeechSynthesisUtterance(text);
+    let text = slide.querySelector('p').textContent.split('');
+    let utterance = new SpeechSynthesisUtterance('');
+    utterance.addEventListener('start', () => {
+        let index = 0;
+        function highlightText() {
+            if (index >= text.length) return;
+            let highlightedText = '';
+            for (let i = index; i < text.length && i < index + Math.min(100, text.length - index); i++) {
+                highlightedText += text[i];
+                if (i >= index + Math.min(100, text.length - index)) break;
+                slide.querySelector('p').innerHTML = highlightedText.replace(new RegExp(highlightedText.substring(index, index + Math.min(100, text.length - index)), 'g'), '<span class="highlight">$&</span>');
+            }
+            index += Math.min(100, text.length - index);
+            setTimeout(highlightText, Math.floor(100 / speechSynthesis.getSpeechRate()));
+        }
+        highlightText();
+    });
     utterance.addEventListener('end', () => {
-      // Handle the end of speech synthesis here if needed
+        // Handle the end of speech synthesis here if needed
     });
     utterance.addEventListener('error', (event) => {
-      console.error("Speech synthesis error:", event.error);
-      alert("Text-to-speech is not supported by your browser or is currently unavailable.");
+        console.error("Speech synthesis error:", event.error);
+        alert("Text-to-speech is not supported by your browser or is currently unavailable.");
     });
     speechSynthesis.speak(utterance);
 }
