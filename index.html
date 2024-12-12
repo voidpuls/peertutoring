@@ -101,6 +101,21 @@ body {
 .slide button:hover {
   background-color: rgba(0, 100, 255, 0.9);
 }
+.slide.active {
+  animation: slideIn 0.5s ease-in-out forwards; /* Added animation */
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-50px); /* Adjust as needed */
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
 </style>
 </head>
