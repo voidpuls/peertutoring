@@ -5,25 +5,25 @@
 <style>
 body {
   font-family: 'Roboto Mono', monospace;
-  background: linear-gradient(135deg, #1e2833, #2e3f4f); /* Darker, more futuristic gradient */
+  background: linear-gradient(135deg, #1e2833, #2e3f4f);
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  color: #dfe6e9; /* Lighter grey text */
+  color: #dfe6e9;
 }
 
 .container {
   width: 90%;
   max-width: 900px;
-  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8)); /* Transparent dark gradient */
+  background: linear-gradient(to bottom, rgba(40,55,68,0.8), rgba(26,38,49,0.8));
   border-radius: 20px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
   padding: 40px;
   margin: 50px auto;
-  position: relative; /* For positioning the navigation buttons */
+  position: relative;
 }
 
 .slide {
@@ -31,14 +31,13 @@ body {
   text-align: center;
   padding: 30px;
   transition: opacity 0.5s ease;
-  opacity: 0; /* Initially hidden */
+  opacity: 0;
 }
 
 .slide.active {
-  opacity: 1; /* Fade in when active */
+  opacity: 1;
 }
 
-/* Add a highlight effect to the text as it's read */
 .highlight {
     background-color: yellow;
     color: black;
@@ -50,6 +49,7 @@ body {
 }
 
 </style>
+
 
 </head>
 <body>
@@ -142,6 +142,7 @@ body {
     <p id="slide11Text">We've come a long way since the early days of computers! From floppy disks to flash drives, software to cloud computing, we've seen incredible advancements in technology. Who knows what the future will hold?</p>
     <button onclick="speak(this.parentNode)">Speak</button>
   </div>
+
 <center>
   <div class="navigation">
     <button id="prevBtn" onclick="showPreviousSlide()" disabled>Previous</button>
@@ -182,20 +183,16 @@ function updateNavigationButtons() {
 }
 
 function speak(slide) {
-    let text = slide.querySelector('p').textContent.split('');
+    let text = slide.querySelector('p').textContent.split(' '); // Split into words
     let utterance = new SpeechSynthesisUtterance('');
     utterance.addEventListener('start', () => {
         let index = 0;
         function highlightText() {
             if (index >= text.length) return;
-            let highlightedText = '';
-            for (let i = index; i < text.length && i < index + Math.min(100, text.length - index); i++) {
-                highlightedText += text[i];
-                if (i >= index + Math.min(100, text.length - index)) break;
-                slide.querySelector('p').innerHTML = highlightedText.replace(new RegExp(highlightedText.substring(index, index + Math.min(100, text.length - index)), 'g'), '<span class="highlight">$&</span>');
-            }
-            index += Math.min(100, text.length - index);
-            setTimeout(highlightText, Math.floor(100 / speechSynthesis.getSpeechRate()));
+            let highlightedText = text[index];
+            slide.querySelector('p').innerHTML = slide.querySelector('p').textContent.replace(new RegExp('\\b' + highlightedText + '\\b', 'g'), '<span class="highlight">$&</span>');
+            index++;
+            setTimeout(highlightText, Math.floor(highlightedText.length * 100 / speechSynthesis.getSpeechRate())); // Adjust timing based on word length
         }
         highlightText();
     });
@@ -209,7 +206,8 @@ function speak(slide) {
     speechSynthesis.speak(utterance);
 }
 
-showSlide(0); // Show the first slide initially
+// Add slides here (same as before, but with updated speak function)
+showSlide(0);
 
 </script>
 
